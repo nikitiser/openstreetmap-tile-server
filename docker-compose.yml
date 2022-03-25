@@ -1,14 +1,19 @@
 version: '3'
-
 services:
   map:
-    image: overv/openstreetmap-tile-server
+    build: https://github.com/nikitiser/openstreetmap-tile-server.git
     volumes:
       - openstreetmap-data:/var/lib/postgresql/12/main
+      - openstreetmap-rendered-tiles:/var/lib/mod_tile
     ports:
       - "8080:80"
+    environment:
+      - DOWNLOAD_PBF=https://download.geofabrik.de/russia-latest.osm.pbf
     command: "run"
+
 
 volumes:
   openstreetmap-data:
-    external: true
+    name: openstreetmap-data
+  openstreetmap-rendered-tiles:
+    name: openstreetmap-rendered-tiles

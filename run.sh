@@ -25,7 +25,7 @@ fi
 
 set -x
 
-if [ "$1" = "import" ]; then
+if [ "$1" = "run" ]; then
     # Ensure that database directory is in right state
     chown postgres:postgres -R /var/lib/postgresql
     if [ ! -f /var/lib/postgresql/12/main/PG_VERSION ]; then
