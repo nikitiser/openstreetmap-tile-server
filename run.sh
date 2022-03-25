@@ -89,10 +89,10 @@ if [ "$1" = "run" ]; then
 
     service postgresql stop
 
-    exit 0
-fi
+    
 
-if [ "$1" = "run" ]; then
+
+
     # Clean /tmp
     rm -rf /tmp/*
 
