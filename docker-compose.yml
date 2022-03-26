@@ -3,16 +3,18 @@ services:
   map:
     build: https://github.com/nikitiser/openstreetmap-tile-server.git
     volumes:
-      - /absolute/path/to/luxembourg.osm.pbf:/data.osm.pbf
-      - /absolute/path/to/luxembourg.poly:/data.poly
+      - ./r.pbf:/data.osm.pbf
+      - ./r.poly:/data.poly
       - openstreetmap-data:/var/lib/postgresql/12/main
       - openstreetmap-rendered-tiles:/var/lib/mod_tile
     ports:
       - "8080:80"
-    # environment:
+    environment:
+      - ALLOW_CORS=enabled
+      - "OSM2PGSQL_EXTRA_ARGS=-C 4096 --flat-nodes /nodes/flat_nodes.bin"
     #   - DOWNLOAD_PBF=https://download.geofabrik.de/russia-latest.osm.pbf
     #   - DOWNLOAD_POLY=https://download.geofabrik.de/russia.poly
-    command: "run"
+    command: "import"
 
 
 volumes:

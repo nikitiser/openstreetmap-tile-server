@@ -25,7 +25,7 @@ fi
 
 set -x
 
-if [ "$1" = "run" ]; then
+if [ "$1" = "import" ]; then
     # Ensure that database directory is in right state
     chown postgres:postgres -R /var/lib/postgresql
     if [ ! -f /var/lib/postgresql/12/main/PG_VERSION ]; then
@@ -46,14 +46,14 @@ if [ "$1" = "run" ]; then
     # Download Luxembourg as sample if no data is provided
     if [ ! -f /data.osm.pbf ] && [ -z "${DOWNLOAD_PBF:-}" ]; then
         echo "WARNING: No import file at /data.osm.pbf, so importing Luxembourg as example..."
-        DOWNLOAD_PBF=https://download.geofabrik.de/europe/luxembourg-latest.osm.pbf
-        DOWNLOAD_POLY=https://download.geofabrik.de/europe/luxembourg.poly
+        DOWNLOAD_PBF="https://download.geofabrik.de/europe/luxembourg-latest.osm.pbf"
+        DOWNLOAD_POLY="https://download.geofabrik.de/europe/luxembourg.poly"
     fi
 
     if [ -n "${DOWNLOAD_PBF:-}" ]; then
         echo "INFO: Download PBF file: $DOWNLOAD_PBF"
         wget ${WGET_ARGS:-} "$DOWNLOAD_PBF" -O /data.osm.pbf
-        if [ -n "${DOWNLOAD_POLY:-}" ]; then
+        if [ -n "$DOWNLOAD_POLY" ]; then
             echo "INFO: Download PBF-POLY file: $DOWNLOAD_POLY"
             wget ${WGET_ARGS:-} "$DOWNLOAD_POLY" -O /data.poly
         fi
@@ -73,7 +73,6 @@ if [ "$1" = "run" ]; then
     if [ -f /data.poly ]; then
         sudo -u renderer cp /data.poly /var/lib/mod_tile/data.poly
     fi
-    
 
     # Import data
     sudo -u renderer osm2pgsql -d gis --create --slim -G --hstore --tag-transform-script /home/renderer/src/openstreetmap-carto/openstreetmap-carto.lua --number-processes ${THREADS:-4} -S /home/renderer/src/openstreetmap-carto/openstreetmap-carto.style /data.osm.pbf ${OSM2PGSQL_EXTRA_ARGS:-}
@@ -90,10 +89,10 @@ if [ "$1" = "run" ]; then
 
     service postgresql stop
 
-    
+    exit 0
+fi
 
-
-
+if [ "$1" = "run" ]; then
     # Clean /tmp
     rm -rf /tmp/*
 
